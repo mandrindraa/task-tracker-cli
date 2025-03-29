@@ -11,7 +11,7 @@ import (
 
 func init() {
 	addCmd := &cobra.Command{
-		Use:   "add -p 1 -n 'Wash the dishes' -N 'Note'",
+		Use:   "add [-p 1] -n 'Wash the dishes' [-N 'Note']",
 		Short: styles.Title("Add a new task"),
 		Run:   add,
 	}
@@ -24,17 +24,17 @@ func init() {
 func add(cmd *cobra.Command, args []string) {
 	name, err := cmd.Flags().GetString("name")
 	if name == "" || err != nil {
-		fmt.Println("Error getting task name:", err)
+		fmt.Println(styles.ErrorIndication("Error getting task name!"))
 		os.Exit(1)
 	}
 	priority, err := cmd.Flags().GetUint("priority")
 	if err != nil {
-		fmt.Println("Invalid Priority", err.Error())
+		fmt.Println(styles.ErrorIndication("Invalid Priority!"))
 		os.Exit(1)
 	}
 	note, err := cmd.Flags().GetString("note")
 	if err != nil {
-		fmt.Println("Invalid Note")
+		fmt.Println(styles.ErrorIndication("Invalid Note!"))
 		os.Exit(1)
 	}
 	db.Create(&models.Task{
