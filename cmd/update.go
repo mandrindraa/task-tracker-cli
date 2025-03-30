@@ -40,5 +40,6 @@ func update(cmd *cobra.Command, args []string) {
 		fmt.Println(styles.ErrorIndication("Invalid operation: Task should have a name"))
 		os.Exit(1)
 	}
+	fmt.Print(name)
 
 }
