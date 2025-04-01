@@ -2,13 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/mandrindraa/task-tracker-cli/models"
 	"github.com/mandrindraa/task-tracker-cli/styles"
 	"github.com/spf13/cobra"
-	"gorm.io/gorm"
 )
 
 func init() {
@@ -21,32 +19,33 @@ func init() {
 	updateCmd.Flags().IntP("id", "i", 1, "Update based on task ID")
 	updateCmd.Flags().StringP("name", "n", "", "This will provide the NEW_NAME for the task")
 	updateCmd.Flags().StringP("status", "s", "completed", "This will update task status")
+	updateCmd.Flags().String("no-status-change", "", "This will not change the status of the task")
 	RootCmd.AddCommand(updateCmd)
 }
 
 func update(cmd *cobra.Command, args []string) {
 	id, err := getTaskID(cmd)
 	if err != nil {
-		handleError("Invalid task ID", err)
+		HandleError("Invalid task ID", err)
 	}
 
 	task, err := findTaskByID(id)
 	if err != nil {
-		handleError(err.Error(), nil)
+		HandleError(err.Error(), nil)
 	}
 
 	status, err := getStatus(cmd)
 	if err != nil {
-		handleError("Invalid status", err)
+		HandleError("Invalid status", err)
 	}
 
 	name, err := getName(cmd)
 	if err != nil {
-		handleError("Invalid name", err)
+		HandleError("Invalid name", err)
 	}
 
 	if err := updateTaskFields(&task, name, status); err != nil {
-		handleError("Failed to update the task", err)
+		HandleError("Failed to update the task", err)
 	}
 
 	fmt.Println(styles.SuccessIndication("Task updated successfully"))
@@ -58,28 +57,18 @@ func getTaskID(cmd *cobra.Command) (int, error) {
 }
 
 // findTaskByID retrieves a task by its ID from the database
-func findTaskByID(id int) (models.Task, error) {
-	var task models.Task
-	result := db.First(&task, "id = ?", id)
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			return task, fmt.Errorf("task not found")
-		}
-		return task, fmt.Errorf("error retrieving task: %v", result.Error)
-	}
-	return task, nil
-}
 
 // getStatus retrieves and validates the status from the command flags
 func getStatus(cmd *cobra.Command) (string, error) {
 	status, err := cmd.Flags().GetString("status")
-	if err != nil || status == "" || status == "\n" {
+	if err != nil {
 		return "", fmt.Errorf("task should have a valid status")
 	}
-	if !models.IsValidStatus(status) {
+	validStatus, ok := models.IsValidStatus(status)
+	if !ok {
 		return "", fmt.Errorf("invalid status! Allowed values are: pending, in progress, completed, aborted")
 	}
-	return strings.ToLower(status), nil
+	return strings.ToLower(validStatus), nil
 }
 
 // getName retrieves the name from the command flags
@@ -99,14 +88,4 @@ func updateTaskFields(task *models.Task, name, status string) error {
 		return result.Error
 	}
 	return nil
-}
-
-// handleError prints an error message and exits the program
-func handleError(message string, err error) {
-	if err != nil {
-		fmt.Println(styles.ErrorIndication(fmt.Sprintf("%s: %v", message, err)))
-	} else {
-		fmt.Println(styles.ErrorIndication(message))
-	}
-	os.Exit(1)
 }
