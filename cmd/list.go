@@ -13,8 +13,8 @@ import (
 func init() {
 	listCmd := &cobra.Command{
 		Use:   "list [-s Status]",
-		Short: "All task should appear whatever its status",
-		Long:  "This will list all of your task",
+		Short: styles.Title("All task should appear whatever its status"),
+		Long:  styles.Title("This will list all of your task"),
 		Run:   list,
 	}
 	listCmd.Flags().StringP("status", "s", "", "Filter status of task")
@@ -50,6 +50,9 @@ func list(cmd *cobra.Command, args []string) {
 				statusStr = styles.Green + statusStr + styles.Reset
 			} else if task.Status == models.InProgress {
 				statusStr = styles.Yellow + statusStr + styles.Reset
+			} else if task.Status == models.Aborted {
+				nameStr = styles.Red + nameStr + styles.Reset
+				statusStr = styles.Red + statusStr + styles.Reset
 			} else {
 				statusStr = styles.Cyan + statusStr + styles.Reset
 			}
