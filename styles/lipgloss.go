@@ -58,7 +58,7 @@ func Title(content string) string {
 	return titleStyle.Render(content)
 }
 
-func Success(content string) string {
+func SuccessIndication(content string) string {
 	successTitle := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(lipgloss.Color("#FAFAFA")).
