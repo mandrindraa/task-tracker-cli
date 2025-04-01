@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/mandrindraa/task-tracker-cli/database"
 	"github.com/mandrindraa/task-tracker-cli/models"
@@ -26,4 +27,26 @@ func init() {
 	db = database.GetDB()
 	db.AutoMigrate(&models.Task{})
 	RootCmd.PersistentFlags().BoolVarP(&rootVerbose, "verbose", "v", false, "enable verbose output")
+}
+
+// handleError prints an error message and exits the program
+func HandleError(message string, err error) {
+	if err != nil {
+		fmt.Println(styles.ErrorIndication(fmt.Sprintf("%s: %v", message, err)))
+	} else {
+		fmt.Println(styles.ErrorIndication(message))
+	}
+	os.Exit(1)
+}
+
+func findTaskByID(id int) (models.Task, error) {
+	var task models.Task
+	result := db.First(&task, "id = ?", id)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return task, fmt.Errorf("task not found")
+		}
+		return task, fmt.Errorf("error retrieving task: %v", result.Error)
+	}
+	return task, nil
 }
