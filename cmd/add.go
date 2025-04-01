@@ -43,6 +43,6 @@ func add(cmd *cobra.Command, args []string) {
 		Note:     note,
 		Priority: priority,
 	})
-	fmt.Println(styles.Success("Adding task with name: " + name))
+	fmt.Println(styles.SuccessIndication("Adding task with name: " + name))
 
 }
