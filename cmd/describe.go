@@ -50,7 +50,6 @@ func printTaskDetails(task models.Task) {
 	printField("Task Updated At", task.UpdatedAt.Format(time.ANSIC))
 
 	fmt.Println(styles.Bold + "╚════════════════════════╩════════════════════════════════╝" + styles.Reset)
-	fmt.Println(styles.SuccessIndication("Task details retrieved successfully"))
 }
 
 // printField prints a field and its value, wrapping the value if it is too long
