@@ -18,6 +18,7 @@ func init() {
 	addCmd.Flags().StringP("name", "n", "", "Task name")
 	addCmd.Flags().UintP("priority", "p", 100, "Task Priority")
 	addCmd.Flags().StringP("note", "N", "", "Add A note to the Task")
+	addCmd.MarkFlagRequired("name")
 	RootCmd.AddCommand(addCmd)
 }
 
