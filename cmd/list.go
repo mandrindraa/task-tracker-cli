@@ -56,7 +56,7 @@ func list(cmd *cobra.Command, args []string) {
 			} else {
 				statusStr = styles.Cyan + statusStr + styles.Reset
 			}
-			fmt.Printf("║ %-3s ║ %-30s ║ %11s ║\n", idStr, nameStr, statusStr)
+			fmt.Printf("║ %-3s ║ %-30s ║ %-11s ║\n", idStr, nameStr, statusStr)
 		}
 	}
 
